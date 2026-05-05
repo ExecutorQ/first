@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>畢業專題口試簡報 - 游嘉翔</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #ffffff;
+            color: #0f172a;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #2563eb, #0891b2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .media-container {
+            background-color: #f8fafc;
+            border: 2px solid #f1f5f9;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .media-container:hover {
+            border-color: #3b82f6;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        .speaker-notes-panel {
+            box-shadow: 0 -10px 40px -10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="w-full h-screen flex flex-col">
+
+    <div class="w-full h-1.5 bg-slate-100 relative z-50">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-500 ease-out" style="width: 0%;"></div>
+    </div>
+
+    <main id="slide-content" class="flex-1 flex flex-col items-center justify-center p-12 relative w-full max-w-[1440px] mx-auto overflow-hidden">
+        </main>
+
+    <div id="speaker-notes" class="hidden absolute bottom-24 left-1/2 transform -translate-x-1/2 w-3/4 max-w-4xl bg-white border-t-4 border-green-500 p-6 rounded-xl speaker-notes-panel z-50 animate-fade-in-up">
+        <div class="flex items-center mb-3 border-b border-slate-100 pb-2">
+            <i data-lucide="mic" class="w-5 h-5 text-green-500 mr-2"></i>
+            <h3 class="text-green-600 font-bold text-lg">講稿提示 (Speaker Notes)</h3>
+        </div>
+        <p id="notes-text" class="text-slate-600 text-lg leading-relaxed"></p>
+    </div>
+
+    <footer class="h-24 border-t border-slate-100 bg-white/80 backdrop-blur-md flex items-center justify-between px-10 z-40">
+        <div class="flex items-center text-slate-400 font-mono text-xs font-bold tracking-widest">
+            <i data-lucide="cpu" class="w-4 h-4 mr-2 text-blue-500"></i> SYSTEM READY | ORAL DEFENSE 114
+        </div>
+        
+        <div class="flex items-center gap-10">
+            <button id="prev-btn" class="p-3 rounded-full hover:bg-blue-50 text-slate-400 hover:text-blue-600 disabled:opacity-20 transition-all">
+                <i data-lucide="chevron-left" class="w-10 h-10"></i>
+            </button>
+            
+            <div class="flex flex-col items-center min-w-[80px]">
+                <span id="slide-counter" class="text-xl font-black text-slate-800">1 / 8</span>
+                <div class="w-8 h-1 bg-blue-600 mt-1 rounded-full"></div>
+            </div>
+            
+            <button id="next-btn" class="p-3 rounded-full hover:bg-blue-50 text-slate-400 hover:text-blue-600 disabled:opacity-20 transition-all">
+                <i data-lucide="chevron-right" class="w-10 h-10"></i>
+            </button>
+        </div>
+
+        <button id="toggle-notes" class="group px-6 py-3 rounded-xl flex items-center transition-all font-bold text-sm bg-slate-50 text-slate-500 hover:bg-blue-600 hover:text-white border border-slate-200 hover:border-blue-600">
+            <i data-lucide="file-text" class="w-5 h-5 mr-2"></i>
+            <span id="toggle-text">顯示講稿</span>
+        </button>
+    </footer>
+
+    <script>
+        // ==========================================
+        // 📊 簡報資料與媒體設定區
+        // ==========================================
+        /**
+         * 💡 教學：如何替換圖片或影片？
+         * 1. 將圖片/影片放在與此 index.html 同一個資料夾內。
+         * 2. 在對應的 slide 內填入 mediaUrl: "檔名.png" 或 "檔名.mp4"。
+         * 3. 設定 mediaType 為 "image" 或 "video"。
+         */
+        const slidesData = [
+            {
+                id: 1,
+                title: "基於雙目視覺與深度學習之<br><span class='gradient-text'>自主避障自走車</span>",
+                subtitle: "114學年度 畢業專題 第一次口試報告",
+                presenters: "指導教授：吳建興 教授 | 專題學生：游䕒翔、許蓁妮、吳芝妘",
+                layout: "cover",
+                icon: "monitor-play",
+                mediaUrl: "1.jpg", // ⬅️ 這裡放首頁背景圖路徑
+                mediaType: "image",
+                speakerNotes: "各位評審委員好，我們這組的專題題目是『基於雙目視覺與深度學習之自主避障自走車系統開發』。我們的核心目標是打造一台能在室內環境中，透過視覺與感測器達成自主避障的 AMR 小車。今天將針對目前第一階段『視覺感知大腦』與『離線決策系統』的開發成果進行報告。"
+            },
+            {
+                id: 2,
+                title: "系統開發架構與目前進度",
+                bullets: [
+                    "三大核心模組：感知 (Perception) ➔ 決策 (Planning) ➔ 控制 (Control)",
+                    "今日報告重點：",
+                    "✅ 破萬張資料管線建置",
+                    "✅ YOLOv8、YOLO11 模型訓練",
+                    "✅ Software-in-the-Loop 離線決策驗證"
+                ],
+                layout: "content-right-image",
+                mediaUrl: "2.png", // ⬅️ 這裡放架構圖路徑
+                mediaType: "image",
+                speakerNotes: "這是我們整體的系統架構圖。自走車的開發分為感知、決策與控制三個層次。在第一次口試的階段，我們主要聚焦在前半段：建置高可靠度的資料管線、訓練極低延遲的 YOLO 感知大腦，並且在電腦端完成了『軟體端』的離線避障驗證。硬體整合則是我們下一階段的目標。"
+            },
+            {
+                id: 3,
+                title: "核心程式碼一：自動標註系統",
+                bullets: [
+                    "檔案：畢業專題標註.ipynb (執行於 Colab T4 GPU 環境)",
+                    "核心技術：Ultralytics 框架與 YOLOv8 模型 (yolov8n.pt)",
+                    "運作邏輯：",
+                    "➔ 動態資料載入：擷取最新 5,000 張人工標註圖，訓練大腦。",
+                    "➔ AI 自動推論：撰寫迴圈腳本，自動讀取新批次影像並產出 .txt 標註檔。",
+                    "➔ 品質控管：人工進行校正。"
+                ],
+                layout: "split-images",
+                mediaUrl: "3.png", // ⬅️ 這裡放左圖 (程式碼)
+                mediaUrl2: "4.jpg", // ⬅️ 這裡放右圖 (預測結果)
+                mediaType: "image",
+                speakerNotes: "接著我們進入第一個核心程式碼的部分。為了突破人工標註的瓶頸，我們開發了這套自動標註系統。在 Colab T4 環境下，我們使用 YOLOv8 訓練出初階大腦 M8，並寫了自動化腳本讓它去推論新拍攝的影片，這套「人機協作」的流程讓我們大幅省下人力，將資料擴充到近萬張。"
+            },
+            {
+                id: 4,
+                title: "巨量資料工程與防錯機制",
+                bullets: [
+                    "總資料規模：高達 10000 多張訓練圖片。",
+                    "協作防碰撞：開發自動化前綴腳本，避免多人協作時檔名衝突與覆寫。"
+                ],
+                layout: "stacked-images",
+                mediaUrl: "5.png", // ⬅️ 這裡放上圖
+                mediaUrl2: "6.png", // ⬅️ 這裡放下圖
+                mediaType: "image",
+                speakerNotes: "為了處理組員間的資料整合，我們寫了自動化命名腳本防止檔案覆蓋。"
+            },
+            {
+                id: 5,
+                title: "核心程式碼二：最終大腦訓練系統 (大尺度最佳化)",
+                bullets: [
+                    "檔案：畢專最終訓練.ipynb (執行於 Colab A100 頂級算力)",
+                    "架構升級：升級至最新 YOLO11 (yolo11n.pt)",
+                    "效能榨乾與參數最佳化：",
+                    "➔ 全量解鎖：解除數量限制，投入 10000 多張全量資料。",
+                    "➔ 平行處理：Batch Size 提升至 128，Workers 設為 8。",
+                    "➔ 突破 I/O 瓶頸：啟用 cache=True，將 7.7GB 影像全數載入 RAM。"
+                ],
+                layout: "content-right-image",
+                mediaUrl: "7.png", // ⬅️ 這裡放訓練數據大圖
+                mediaType: "image",
+                speakerNotes: "第二個核心程式碼是我們的最終訓練系統。當資料量擴充到近萬張時，我們將模型升級到了最新的 YOLO11。為了解決龐大圖庫的訓練瓶頸，我們用了 A100 頂級 GPU，並在程式碼中特別設定 Batch Size 為 128 進行高度平行化，同時開啟 cache=True 把 7.7GB 的圖檔全塞進記憶體，避開硬碟 I/O 延遲，不到一小時就完成了收斂。"
+            },
+            {
+                id: 6,
+                title: "模型評估與極致精準度",
+                bullets: [
+                    "核心指標：測試集平均精度 mAP@50 達 0.994。",
+                    "類別表現：",
+                    "➔ 危險障礙物 (柱子 pillar、垃圾桶 trash_can)：Precision 與 Recall 皆大於 99%。",
+                    "➔ 具備極強的抗雜訊能力與環境泛化力，足以應對走廊複雜光源。"
+                ],
+                layout: "split-images",
+                mediaUrl: "8.png", // ⬅️ 這裡放 results.png
+                mediaUrl2: "9.png", // ⬅️ 這裡放 confusion_matrix.png
+                mediaType: "image",
+                speakerNotes: "這是我們最終拿到的成績單。從左圖的收斂曲線可以看出模型學習得非常健康；右邊的混淆矩陣則證明了，模型在面對預設的環境物件時，精準度很高了。這代表我們為小車打造的這雙『眼睛』已經具備實戰能力。"
+            },
+            {
+                id: 7,
+                title: "軟體迴路驗證 (SIL) 與決策狀態機",
+                bullets: [
+                    "單目深度估算：利用 BBox Y 座標底部建立虛擬物理深度 (Danger Depth Line)。",
+                    "規則導向決策 (Rule-based)：依據紅線觸發狀態，即時輸出 STOP / TURN LEFT / TURN RIGHT 控制指令。",
+                    "即時效能：總系統運算延遲 (Latency) < 45ms，達到即時避障標準。"
+                ],
+                layout: "video-center",
+                mediaUrl: "10.mp4", // ⬅️ 這裡放演示影片 (檔名.mp4)
+                mediaType: "video",
+                speakerNotes: "有了模型後，我們不能直接放上車子，否則稍有差錯車子會直接撞毀。因此我們用 Python 寫了一套離線測試模擬器 (展示影片)。畫面上可以看到，我們把 Bounding Box 結合了單目深度估算演算法，畫出了一條紅色的危險深度線。當障礙物觸發這條線，我們寫的 Rule-based 狀態機就會立刻介入，精準算出要左轉還是煞車。"
+            },
+            {
+                id: 8,
+                title: "現有架構限制與下一階段擴充",
+                bullets: [
+                    "視覺盲區挑戰：純單目視覺在面對「無特徵純白牆壁」時無法萃取特徵與測距，將導致撞牆失誤。",
+                    "解決方案：硬體感測器融合 (Sensor Fusion)。",
+                    "已完成前置作業：光達 (LiDAR) 硬體 UART 底層通訊與絕對測距測試成功。",
+                    "下階段目標：部署至車載開發板，整合 YOLO 語意感知與 LiDAR 幾何測距，進行實機測試。"
+                ],
+                layout: "split-images",
+                mediaUrl: "11.png", // ⬅️ 放白牆盲區圖
+                mediaUrl2: "12.JPG", // ⬅️ 放光達測試圖
+                mediaType: "image",
+                speakerNotes: "在開發過程中，我們發現如果只依賴單一顆鏡頭，當車子遇到完全沒有特徵的『純白牆壁』時，YOLO 會失效導致撞牆。身為工程師，我們決定在下一階段導入『光達 (LiDAR)』進行感測器融合。目前我們已經在電腦端成功打通了光達的底層通訊協定，並能精準抓到物理距離。"
+            }
+        ];
+
+        // ==========================================
+        // ⚛️ 邏輯渲染引擎
+        // ==========================================
+        let currentSlide = 0;
+        let showNotes = false;
+
+        const slideContent = document.getElementById('slide-content');
+        const slideCounter = document.getElementById('slide-counter');
+        const progressBar = document.getElementById('progress-bar');
+        const notesArea = document.getElementById('speaker-notes');
+        const notesText = document.getElementById('notes-text');
+        const toggleBtn = document.getElementById('toggle-notes');
+        const toggleText = document.getElementById('toggle-text');
+
+        function renderMedia(url, type, placeholderText = "請填入媒體路徑", customClass = "") {
+            if (!url) {
+                return `
+                    <div class="media-container w-full h-full min-h-[250px] rounded-3xl flex flex-col items-center justify-center text-slate-300 border-dashed border-2 border-slate-200">
+                        <i data-lucide="${type === 'video' ? 'video' : 'image'}" class="w-12 h-12 mb-3 opacity-20"></i>
+                        <p class="text-xs font-bold uppercase tracking-widest opacity-40">${placeholderText}</p>
+                    </div>
+                `;
+            }
+            if (type === 'video') {
+                return `<video src="${url}" controls autoplay loop muted class="w-full h-full rounded-3xl object-cover shadow-2xl ${customClass}"></video>`;
+            }
+            return `<img src="${url}" class="w-full h-full rounded-3xl object-contain shadow-xl ${customClass}" />`;
+        }
+
+        function updateSlide() {
+            const data = slidesData[currentSlide];
+            let html = "";
+
+            // 更新 UI 狀態
+            slideCounter.innerText = `${currentSlide + 1} / ${slidesData.length}`;
+            progressBar.style.width = `${((currentSlide + 1) / slidesData.length) * 100}%`;
+            notesText.innerText = data.speakerNotes;
+
+            if (data.layout === "cover") {
+                html = `
+                    <div class="text-center max-w-5xl animate-fade-in-up">
+                        <div class="w-24 h-24 bg-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl shadow-blue-200">
+                            <i data-lucide="${data.icon}" class="w-12 h-12 text-white"></i>
+                        </div>
+                        <h1 class="text-7xl font-black mb-8 leading-[1.2] text-slate-900">${data.title}</h1>
+                        <h2 class="text-3xl text-slate-400 font-medium mb-12 tracking-wide">${data.subtitle}</h2>
+                        <div class="inline-flex items-center px-8 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-slate-500 font-bold text-lg mb-10">
+                            ${data.presenters}
+                        </div>
+                        <div class="w-full h-64 mt-4">${renderMedia(data.mediaUrl, data.mediaType, "背景裝飾圖插槽")}</div>
+                    </div>
+                `;
+            } else if (data.layout === "content-right-image") {
+                html = `
+                    <div class="w-full h-full flex flex-col animate-fade-in-up">
+                        <h2 class="text-5xl font-black mb-12 flex items-center">
+                            <span class="w-3 h-12 bg-blue-600 mr-6 rounded-full"></span> ${data.title}
+                        </h2>
+                        <div class="grid grid-cols-2 gap-16 flex-1">
+                            <div class="flex flex-col justify-center">
+                                <ul class="space-y-8">
+                                    ${data.bullets.map(b => `
+                                        <li class="flex items-start text-2xl font-medium text-slate-600">
+                                            <span class="mr-5 text-blue-500 font-bold">${b.includes('✅') ? '✓' : '•'}</span>
+                                            <span>${b.replace('✅', '')}</span>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                            <div class="h-[550px]">${renderMedia(data.mediaUrl, data.mediaType, "主展示圖插槽")}</div>
+                        </div>
+                    </div>
+                `;
+            } else if (data.layout === "split-images") {
+                html = `
+                    <div class="w-full h-full flex flex-col animate-fade-in-up">
+                        <h2 class="text-5xl font-black mb-10 flex items-center">
+                            <span class="w-3 h-12 bg-cyan-500 mr-6 rounded-full"></span> ${data.title}
+                        </h2>
+                        <div class="mb-10">
+                            <ul class="flex flex-wrap gap-x-12 gap-y-4">
+                                ${data.bullets.map(b => `<li class="flex items-center text-xl font-bold text-slate-500"><i data-lucide="check-circle-2" class="w-6 h-6 mr-3 text-cyan-500"></i> ${b}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="grid grid-cols-2 gap-10 flex-1 min-h-[400px]">
+                            ${renderMedia(data.mediaUrl, data.mediaType, "對照圖 A")}
+                            ${renderMedia(data.mediaUrl2, data.mediaType, "對照圖 B")}
+                        </div>
+                    </div>
+                `;
+            } else if (data.layout === "stacked-images") {
+                html = `
+                    <div class="w-full h-full flex flex-col animate-fade-in-up">
+                         <h2 class="text-5xl font-black mb-12 flex items-center">
+                            <span class="w-3 h-12 bg-indigo-500 mr-6 rounded-full"></span> ${data.title}
+                        </h2>
+                        <div class="grid grid-cols-12 gap-12 flex-1">
+                            <div class="col-span-5 flex flex-col justify-center">
+                                <ul class="space-y-8">
+                                    ${data.bullets.map(b => `<li class="text-2xl font-bold text-slate-600 leading-relaxed border-l-4 border-slate-100 pl-6 hover:border-indigo-500 transition-all">${b}</li>`).join('')}
+                                </ul>
+                            </div>
+                            <div class="col-span-7 flex flex-col gap-8">
+                                <div class="h-1/2">${renderMedia(data.mediaUrl, data.mediaType, "資源圖 A")}</div>
+                                <div class="h-1/2">${renderMedia(data.mediaUrl2, data.mediaType, "資源圖 B")}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (data.layout === "video-center") {
+                html = `
+                    <div class="w-full h-full flex flex-col items-center animate-fade-in-up">
+                        <h2 class="text-5xl font-black mb-10 w-full text-left flex items-center">
+                             <span class="w-3 h-12 bg-red-500 mr-6 rounded-full"></span> ${data.title}
+                        </h2>
+                        <div class="w-full grid grid-cols-3 gap-6 mb-10">
+                            ${data.bullets.map(b => `<div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 font-bold text-slate-600 text-center">${b}</div>`).join('')}
+                        </div>
+                        <div class="w-full max-w-6xl flex-1 rounded-3xl overflow-hidden ring-8 ring-slate-50">
+                            ${renderMedia(data.mediaUrl, data.mediaType, "🔥 核心影片插槽 (.mp4)")}
+                        </div>
+                    </div>
+                `;
+            }
+
+            slideContent.innerHTML = html;
+            lucide.createIcons();
+            
+            // 按鈕狀態
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === slidesData.length - 1;
+        }
+
+        // 控制功能
+        function next() { if (currentSlide < slidesData.length - 1) { currentSlide++; updateSlide(); } }
+        function prev() { if (currentSlide > 0) { currentSlide--; updateSlide(); } }
+        
+        document.getElementById('next-btn').onclick = next;
+        document.getElementById('prev-btn').onclick = prev;
+        
+        toggleBtn.onclick = () => {
+            showNotes = !showNotes;
+            notesArea.classList.toggle('hidden');
+            if(showNotes) {
+                toggleBtn.classList.add('bg-blue-600', 'text-white');
+                toggleText.innerText = '隱藏講稿';
+            } else {
+                toggleBtn.classList.remove('bg-blue-600', 'text-white');
+                toggleText.innerText = '顯示講稿';
+            }
+        };
+
+        window.onkeydown = (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') next();
+            if (e.key === 'ArrowLeft') prev();
+        };
+
+        // 初始化
+        updateSlide();
+    </script>
+</body>
+</html>
