@@ -54,7 +54,8 @@
     </div>
 
     <main id="slide-content" class="flex-1 flex flex-col items-center justify-center p-12 relative w-full max-w-[1440px] mx-auto overflow-hidden">
-        </main>
+        <!-- 內容由 JS 動態生成 -->
+    </main>
 
     <div id="speaker-notes" class="hidden absolute bottom-24 left-1/2 transform -translate-x-1/2 w-3/4 max-w-4xl bg-white border-t-4 border-green-500 p-6 rounded-xl speaker-notes-panel z-50 animate-fade-in-up">
         <div class="flex items-center mb-3 border-b border-slate-100 pb-2">
@@ -91,15 +92,6 @@
     </footer>
 
     <script>
-        // ==========================================
-        // 📊 簡報資料與媒體設定區
-        // ==========================================
-        /**
-         * 💡 教學：如何替換圖片或影片？
-         * 1. 將圖片/影片放在與此 index.html 同一個資料夾內。
-         * 2. 在對應的 slide 內填入 mediaUrl: "檔名.png" 或 "檔名.mp4"。
-         * 3. 設定 mediaType 為 "image" 或 "video"。
-         */
         const slidesData = [
             {
                 id: 1,
@@ -108,7 +100,7 @@
                 presenters: "指導教授：吳建興 教授 | 專題學生：游䕒翔、許蓁妮、吳芝妘",
                 layout: "cover",
                 icon: "monitor-play",
-                mediaUrl: "1.jpg", // ⬅️ 這裡放首頁背景圖路徑
+                mediaUrl: "1.jpg", 
                 mediaType: "image",
                 speakerNotes: "各位評審委員好，我們這組的專題題目是『基於雙目視覺與深度學習之自主避障自走車系統開發』。我們的核心目標是打造一台能在室內環境中，透過視覺與感測器達成自主避障的 AMR 小車。今天將針對目前第一階段『視覺感知大腦』與『離線決策系統』的開發成果進行報告。"
             },
@@ -118,12 +110,12 @@
                 bullets: [
                     "三大核心模組：感知 (Perception) ➔ 決策 (Planning) ➔ 控制 (Control)",
                     "今日報告重點：",
-                    "✅ 破萬張資料管線建置",
-                    "✅ YOLOv8、YOLO11 模型訓練",
-                    "✅ Software-in-the-Loop 離線決策驗證"
+                    "破萬張資料管線建置",
+                    "YOLOv8、YOLO11 模型訓練",
+                    "Software-in-the-Loop 離線決策驗證"
                 ],
-                layout: "content-right-image",
-                mediaUrl: "2.png", // ⬅️ 這裡放架構圖路徑
+                layout: "content-right-list",
+                mediaUrl: "2.png", 
                 mediaType: "image",
                 speakerNotes: "這是我們整體的系統架構圖。自走車的開發分為感知、決策與控制三個層次。在第一次口試的階段，我們主要聚焦在前半段：建置高可靠度的資料管線、訓練極低延遲的 YOLO 感知大腦，並且在電腦端完成了『軟體端』的離線避障驗證。硬體整合則是我們下一階段的目標。"
             },
@@ -131,96 +123,85 @@
                 id: 3,
                 title: "核心程式碼一：自動標註系統",
                 bullets: [
-                    "檔案：畢業專題標註.ipynb (執行於 Colab T4 GPU 環境)",
-                    "核心技術：Ultralytics 框架與 YOLOv8 模型 (yolov8n.pt)",
-                    "運作邏輯：",
-                    "➔ 動態資料載入：擷取最新 5,000 張人工標註圖，訓練大腦。",
-                    "➔ AI 自動推論：撰寫迴圈腳本，自動讀取新批次影像並產出 .txt 標註檔。",
-                    "➔ 品質控管：人工進行校正。"
+                    "初階大腦：建立 YOLOv8 Baseline",
+                    "自動標註：撰寫腳本批次推論",
+                    "核心策略：人機協作 (HITL) 品管"
                 ],
                 layout: "split-images",
-                mediaUrl: "3.png", // ⬅️ 這裡放左圖 (程式碼)
-                mediaUrl2: "4.jpg", // ⬅️ 這裡放右圖 (預測結果)
+                mediaUrl: "3.png", 
+                mediaUrl2: "4.jpg", 
                 mediaType: "image",
-                speakerNotes: "接著我們進入第一個核心程式碼的部分。為了突破人工標註的瓶頸，我們開發了這套自動標註系統。在 Colab T4 環境下，我們使用 YOLOv8 訓練出初階大腦 M8，並寫了自動化腳本讓它去推論新拍攝的影片，這套「人機協作」的流程讓我們大幅省下人力，將資料擴充到近萬張。"
+                speakerNotes: "接著進入第一個核心程式碼：自動標註系統。如畫面上方三個重點，為了解決純人工標註的瓶頸，我們在 Colab T4 環境利用前 5,000 張圖訓練出 YOLOv8 初階大腦。接著，我們撰寫了自動化迴圈腳本，讓 AI 幫我們推論新影片並批次產生 txt 標註檔。最後透過『人機協作 (Human-in-the-loop)』進行 QA 校正，這套資料飛輪機制讓我們省下大量時間，順利將資料擴充到近萬張。"
             },
             {
                 id: 4,
                 title: "巨量資料工程與防錯機制",
                 bullets: [
-                    "總資料規模：高達 10000 多張訓練圖片。",
-                    "協作防碰撞：開發自動化前綴腳本，避免多人協作時檔名衝突與覆寫。"
+                    "總資料規模：高達 10000 多張訓練圖片",
+                    "協作防碰撞：開發自動化前綴腳本，避免多人協作時檔名衝突與覆寫"
                 ],
                 layout: "stacked-images",
-                mediaUrl: "5.png", // ⬅️ 這裡放上圖
-                mediaUrl2: "6.png", // ⬅️ 這裡放下圖
+                mediaUrl: "5.png", 
+                mediaUrl2: "6.png", 
                 mediaType: "image",
                 speakerNotes: "為了處理組員間的資料整合，我們寫了自動化命名腳本防止檔案覆蓋。"
             },
             {
                 id: 5,
-                title: "核心程式碼二：最終大腦訓練系統 (大尺度最佳化)",
+                title: "核心程式碼二：最終大腦訓練系統",
                 bullets: [
-                    "檔案：畢專最終訓練.ipynb (執行於 Colab A100 頂級算力)",
-                    "架構升級：升級至最新 YOLO11 (yolo11n.pt)",
-                    "效能榨乾與參數最佳化：",
-                    "➔ 全量解鎖：解除數量限制，投入 10000 多張全量資料。",
-                    "➔ 平行處理：Batch Size 提升至 128，Workers 設為 8。",
-                    "➔ 突破 I/O 瓶頸：啟用 cache=True，將 7.7GB 影像全數載入 RAM。"
+                    "架構躍升：導入最新 YOLO11 與 A100 算力",
+                    "平行榨能：Batch Size 128 / Workers 8",
+                    "I/O 突破：7.7GB 影像全載入快取 (cache=True)"
                 ],
                 layout: "content-right-image",
-                mediaUrl: "7.png", // ⬅️ 這裡放訓練數據大圖
+                mediaUrl: "7.png", 
                 mediaType: "image",
-                speakerNotes: "第二個核心程式碼是我們的最終訓練系統。當資料量擴充到近萬張時，我們將模型升級到了最新的 YOLO11。為了解決龐大圖庫的訓練瓶頸，我們用了 A100 頂級 GPU，並在程式碼中特別設定 Batch Size 為 128 進行高度平行化，同時開啟 cache=True 把 7.7GB 的圖檔全塞進記憶體，避開硬碟 I/O 延遲，不到一小時就完成了收斂。"
+                speakerNotes: "第二個核心程式碼是我們的最終訓練系統。當資料量擴充到破萬張時，我們將模型升級到了最新的 YOLO11。為了解決龐大圖庫帶來的訓練瓶頸，我們租用了 A100 頂級 GPU，並設定 Batch Size 為 128 進行高度平行化。最關鍵的是，我們開啟了 cache=True，把高達 7.7GB 的圖檔全數塞進記憶體，完美避開了硬碟的 I/O 延遲，讓模型不到一小時就完成了收斂。"
             },
             {
                 id: 6,
                 title: "模型評估與極致精準度",
                 bullets: [
-                    "核心指標：測試集平均精度 mAP@50 達 0.994。",
-                    "類別表現：",
-                    "➔ 危險障礙物 (柱子 pillar、垃圾桶 trash_can)：Precision 與 Recall 皆大於 99%。",
-                    "➔ 具備極強的抗雜訊能力與環境泛化力，足以應對走廊複雜光源。"
+                    "核心指標：mAP@50 達 0.994",
+                    "危險障礙物：Precision / Recall > 99%",
+                    "環境泛化：具備極強抗雜訊能力"
                 ],
                 layout: "split-images",
-                mediaUrl: "8.png", // ⬅️ 這裡放 results.png
-                mediaUrl2: "9.png", // ⬅️ 這裡放 confusion_matrix.png
+                mediaUrl: "8.png", 
+                mediaUrl2: "9.png", 
                 mediaType: "image",
-                speakerNotes: "這是我們最終拿到的成績單。從左圖的收斂曲線可以看出模型學習得非常健康；右邊的混淆矩陣則證明了，模型在面對預設的環境物件時，精準度很高了。這代表我們為小車打造的這雙『眼睛』已經具備實戰能力。"
+                speakerNotes: "這是我們最終拿到的成績單。畫面上只列了三個最核心的數據：第一，我們的 mAP@50 達到了 0.994。第二，從右邊的混淆矩陣可以看到，針對最容易發生碰撞的柱子和垃圾桶，精準率與召回率都超過了 99%。這代表模型已經具備了極強的環境泛化能力，這雙『眼睛』已經完全具備了實戰水準。"
             },
             {
                 id: 7,
                 title: "軟體迴路驗證 (SIL) 與決策狀態機",
                 bullets: [
-                    "單目深度估算：利用 BBox Y 座標底部建立虛擬物理深度 (Danger Depth Line)。",
-                    "規則導向決策 (Rule-based)：依據紅線觸發狀態，即時輸出 STOP / TURN LEFT / TURN RIGHT 控制指令。",
-                    "即時效能：總系統運算延遲 (Latency) < 45ms，達到即時避障標準。"
+                    "單目測距：建立虛擬危險深度線",
+                    "狀態機決策：即時輸出轉向/煞車指令",
+                    "極致效能：系統總延遲 < 45ms"
                 ],
                 layout: "video-center",
-                mediaUrl: "10.mp4", // ⬅️ 這裡放演示影片 (檔名.mp4)
+                mediaUrl: "10.mp4", 
                 mediaType: "video",
-                speakerNotes: "有了模型後，我們不能直接放上車子，否則稍有差錯車子會直接撞毀。因此我們用 Python 寫了一套離線測試模擬器 (展示影片)。畫面上可以看到，我們把 Bounding Box 結合了單目深度估算演算法，畫出了一條紅色的危險深度線。當障礙物觸發這條線，我們寫的 Rule-based 狀態機就會立刻介入，精準算出要左轉還是煞車。"
+                speakerNotes: "有了模型後，我們不能直接放上車子，否則稍有差錯車子會直接撞毀。因此我們用 Python 寫了一套離線測試模擬器。如同展示影片，我們結合單目深度估算，畫出了一條紅色的危險深度線。當障礙物觸發這條線，Rule-based 狀態機就會立刻介入，精準算出要左轉還是煞車，且整體運算延遲壓在 45 毫秒內。"
             },
             {
                 id: 8,
                 title: "現有架構限制與下一階段擴充",
                 bullets: [
-                    "視覺盲區挑戰：純單目視覺在面對「無特徵純白牆壁」時無法萃取特徵與測距，將導致撞牆失誤。",
-                    "解決方案：硬體感測器融合 (Sensor Fusion)。",
-                    "已完成前置作業：光達 (LiDAR) 硬體 UART 底層通訊與絕對測距測試成功。",
-                    "下階段目標：部署至車載開發板，整合 YOLO 語意感知與 LiDAR 幾何測距，進行實機測試。"
+                    "邊緣案例：純白牆壁之視覺盲區",
+                    "感測器融合：導入 LiDAR 光達測距",
+                    "下階目標：車載開發板實機部署"
                 ],
                 layout: "split-images",
-                mediaUrl: "11.png", // ⬅️ 放白牆盲區圖
-                mediaUrl2: "12.JPG", // ⬅️ 放光達測試圖
+                mediaUrl: "11.png", 
+                mediaUrl2: "12.JPG", 
                 mediaType: "image",
-                speakerNotes: "在開發過程中，我們發現如果只依賴單一顆鏡頭，當車子遇到完全沒有特徵的『純白牆壁』時，YOLO 會失效導致撞牆。身為工程師，我們決定在下一階段導入『光達 (LiDAR)』進行感測器融合。目前我們已經在電腦端成功打通了光達的底層通訊協定，並能精準抓到物理距離。"
+                speakerNotes: "在開發過程中我們發現一個限制：如果只依賴單一顆鏡頭，當車子遇到完全沒有特徵的『純白牆壁』時，視覺測距會失效導致撞牆。為了解決這個視覺盲區，我們下一階段的解法是『感測器融合』。如右圖所示，目前已經在電腦端成功打通了 LiDAR 光達的底層通訊。接下來的目標就是將 YOLO 視覺與光達幾何測距整合，正式部署到車載開發板上進行實測。"
             }
         ];
 
-        // ==========================================
-        // ⚛️ 邏輯渲染引擎
-        // ==========================================
         let currentSlide = 0;
         let showNotes = false;
 
@@ -251,7 +232,6 @@
             const data = slidesData[currentSlide];
             let html = "";
 
-            // 更新 UI 狀態
             slideCounter.innerText = `${currentSlide + 1} / ${slidesData.length}`;
             progressBar.style.width = `${((currentSlide + 1) / slidesData.length) * 100}%`;
             notesText.innerText = data.speakerNotes;
@@ -270,7 +250,8 @@
                         <div class="w-full h-64 mt-4">${renderMedia(data.mediaUrl, data.mediaType, "背景裝飾圖插槽")}</div>
                     </div>
                 `;
-            } else if (data.layout === "content-right-image") {
+            } else if (data.layout === "content-right-list") {
+                // 🌟 第二頁專屬：保留層次感，底下清單改用閃電圖示
                 html = `
                     <div class="w-full h-full flex flex-col animate-fade-in-up">
                         <h2 class="text-5xl font-black mb-12 flex items-center">
@@ -278,14 +259,44 @@
                         </h2>
                         <div class="grid grid-cols-2 gap-16 flex-1">
                             <div class="flex flex-col justify-center">
-                                <ul class="space-y-8">
-                                    ${data.bullets.map(b => `
-                                        <li class="flex items-start text-2xl font-medium text-slate-600">
-                                            <span class="mr-5 text-blue-500 font-bold">${b.includes('✅') ? '✓' : '•'}</span>
-                                            <span>${b.replace('✅', '')}</span>
-                                        </li>
-                                    `).join('')}
-                                </ul>
+                                <div class="space-y-4">
+                                    <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-sm mb-6">
+                                        <div class="flex items-start">
+                                            <i data-lucide="layers" class="w-8 h-8 text-blue-500 mr-4 flex-shrink-0 mt-1"></i>
+                                            <span class="text-2xl font-bold text-slate-700 leading-relaxed">${data.bullets[0]}</span>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-2xl font-black text-slate-800 mt-8 mb-6 border-l-4 border-blue-500 pl-4 py-1">${data.bullets[1]}</h3>
+                                    <div class="pl-2 space-y-5">
+                                        ${data.bullets.slice(2).map(b => `
+                                            <div class="flex items-center text-2xl font-medium text-slate-600">
+                                                <!-- 🔥 這裡把打勾換成了藍色閃電 (zap) -->
+                                                <i data-lucide="zap" class="w-7 h-7 text-blue-500 mr-4 flex-shrink-0"></i>
+                                                <span class="leading-relaxed">${b}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="h-[550px]">${renderMedia(data.mediaUrl, data.mediaType, "主展示圖插槽")}</div>
+                        </div>
+                    </div>
+                `;
+            } else if (data.layout === "content-right-image") {
+                // 🔥 第五頁專屬：閃電卡片版型
+                html = `
+                    <div class="w-full h-full flex flex-col animate-fade-in-up">
+                        <h2 class="text-5xl font-black mb-12 flex items-center">
+                            <span class="w-3 h-12 bg-blue-600 mr-6 rounded-full"></span> ${data.title}
+                        </h2>
+                        <div class="grid grid-cols-2 gap-16 flex-1">
+                            <div class="flex flex-col justify-center gap-8">
+                                ${data.bullets.map(b => `
+                                    <div class="bg-slate-50 px-8 py-6 rounded-2xl border border-slate-100 shadow-sm flex items-center hover:border-blue-400 hover:shadow-md transition-all group">
+                                        <i data-lucide="zap" class="w-8 h-8 text-blue-500 flex-shrink-0 mr-6 group-hover:scale-110 transition-transform"></i>
+                                        <span class="font-bold text-slate-700 text-2xl leading-snug">${b.replace('✅ ', '')}</span>
+                                    </div>
+                                `).join('')}
                             </div>
                             <div class="h-[550px]">${renderMedia(data.mediaUrl, data.mediaType, "主展示圖插槽")}</div>
                         </div>
@@ -294,15 +305,17 @@
             } else if (data.layout === "split-images") {
                 html = `
                     <div class="w-full h-full flex flex-col animate-fade-in-up">
-                        <h2 class="text-5xl font-black mb-10 flex items-center">
+                        <h2 class="text-5xl font-black mb-8 flex items-center">
                             <span class="w-3 h-12 bg-cyan-500 mr-6 rounded-full"></span> ${data.title}
                         </h2>
-                        <div class="mb-10">
-                            <ul class="flex flex-wrap gap-x-12 gap-y-4">
-                                ${data.bullets.map(b => `<li class="flex items-center text-xl font-bold text-slate-500"><i data-lucide="check-circle-2" class="w-6 h-6 mr-3 text-cyan-500"></i> ${b}</li>`).join('')}
-                            </ul>
+                        <div class="w-full grid grid-cols-3 gap-6 mb-8">
+                            ${data.bullets.map(b => `
+                                <div class="bg-slate-50 px-6 py-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-center text-center hover:border-cyan-400 hover:shadow-md transition-all">
+                                    <span class="font-bold text-slate-600 text-lg leading-snug">${b}</span>
+                                </div>
+                            `).join('')}
                         </div>
-                        <div class="grid grid-cols-2 gap-10 flex-1 min-h-[400px]">
+                        <div class="grid grid-cols-2 gap-10 flex-1 min-h-[350px]">
                             ${renderMedia(data.mediaUrl, data.mediaType, "對照圖 A")}
                             ${renderMedia(data.mediaUrl2, data.mediaType, "對照圖 B")}
                         </div>
@@ -330,11 +343,15 @@
             } else if (data.layout === "video-center") {
                 html = `
                     <div class="w-full h-full flex flex-col items-center animate-fade-in-up">
-                        <h2 class="text-5xl font-black mb-10 w-full text-left flex items-center">
+                        <h2 class="text-5xl font-black mb-8 w-full text-left flex items-center">
                              <span class="w-3 h-12 bg-red-500 mr-6 rounded-full"></span> ${data.title}
                         </h2>
-                        <div class="w-full grid grid-cols-3 gap-6 mb-10">
-                            ${data.bullets.map(b => `<div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 font-bold text-slate-600 text-center">${b}</div>`).join('')}
+                        <div class="w-full grid grid-cols-3 gap-6 mb-8">
+                            ${data.bullets.map(b => `
+                                <div class="bg-slate-50 px-6 py-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-center text-center hover:border-red-400 hover:shadow-md transition-all">
+                                    <span class="font-bold text-slate-600 text-lg leading-snug">${b}</span>
+                                </div>
+                            `).join('')}
                         </div>
                         <div class="w-full max-w-6xl flex-1 rounded-3xl overflow-hidden ring-8 ring-slate-50">
                             ${renderMedia(data.mediaUrl, data.mediaType, "🔥 核心影片插槽 (.mp4)")}
@@ -346,12 +363,10 @@
             slideContent.innerHTML = html;
             lucide.createIcons();
             
-            // 按鈕狀態
             document.getElementById('prev-btn').disabled = currentSlide === 0;
             document.getElementById('next-btn').disabled = currentSlide === slidesData.length - 1;
         }
 
-        // 控制功能
         function next() { if (currentSlide < slidesData.length - 1) { currentSlide++; updateSlide(); } }
         function prev() { if (currentSlide > 0) { currentSlide--; updateSlide(); } }
         
@@ -375,7 +390,6 @@
             if (e.key === 'ArrowLeft') prev();
         };
 
-        // 初始化
         updateSlide();
     </script>
 </body>
